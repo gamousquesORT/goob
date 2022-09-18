@@ -1,19 +1,18 @@
 package domain_test
 
 import (
-	"testing"
 	"reflect"
-
+	"testing"
 	"streamapp.com/domain"
 )
 
 var adminUser = domain.UserData{}
 
-func createAdminUser(t testing.TB) *domain.UserData {
+func createAdminUser(t testing.TB) {
 	t.Helper()
 	adminUser, _ := domain.NewUser("Admin6789101", "admin@example.com", "password")
 	adminUser.SetAdmin(true)
-	return adminUser
+
 }
 
 func assertError(t testing.TB, got, want error) {
@@ -34,7 +33,6 @@ func assertNoError(t testing.TB, got error) {
 	}
 }
 
-
 func TestValidUser(t *testing.T) {
 
 	t.Run("Should return no error given a valid User", func(t *testing.T) {
@@ -42,8 +40,8 @@ func TestValidUser(t *testing.T) {
 		got, err := domain.NewUser("uniquename123", "uniqueemail", "uniquepassword")
 
 		want := domain.UserData{"uniquename123", "uniqueemail", "uniquepassword", false}
-	
-		if reflect.DeepEqual(got,want) {
+
+		if reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
 		}
 
@@ -54,7 +52,6 @@ func TestValidUser(t *testing.T) {
 		domain.NewUser("uniquename123", "gaston1@example.com", "uniquepassword")
 		_, err := domain.NewUser("uniquename222", "gaston1@example.com", "12345678901")
 
-		
 		assertError(t, err, domain.ErrExistingEmail)
 
 	})
@@ -91,15 +88,14 @@ func TestValidUser(t *testing.T) {
 
 func TestValidAdminUser(t *testing.T) {
 	t.Run("Should return true given an Admin user ", func(t *testing.T) {
-		user, _ := domain.NewUser("12345678901234567890", "gaston@example.com", "password")
-		user.SetAdmin(true)
-		got := user.GetAmdin()
+		createAdminUser(t)
+		adminUser.SetAdmin(true)
+		got := adminUser.GetAmdin()
 		want := true
 
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
 		}
-	
+
 	})
 }
-

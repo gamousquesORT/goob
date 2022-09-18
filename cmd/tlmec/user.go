@@ -20,7 +20,7 @@ var ErrInvalidUserPassword = errors.New("user password should have more than 10 
 var userEmails = map[string]UserData{}
 
 func NewUser(name string, email string, password string) (*UserData, error) {
-	if !checkExistingEmail(email) && len(name) >= 10 && len(name) <= 20 && len(password) >= 10 && len(password) <= 30 {
+	if !checkExistingEmail(email) && chackValidaName(name) && checkValidPassword(password) {
 		ud := new (UserData)
 		ud.Name = name
 		ud.Email = email
@@ -38,6 +38,14 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 		return &UserData{}, ErrExistingEmail
 	}
 
+}
+
+func chackValidaName(name string) bool {
+	return len(name) >= 10 && len(name) <= 20
+}
+
+func checkValidPassword(password string) bool {
+	return len(password) >= 10 && len(password) <= 30
 }
 
 func checkExistingEmail(email string) bool {
