@@ -14,12 +14,13 @@ type User interface {
 }
 
 var ErrExistingEmail = errors.New("email already exists")
-var ErrInvalidUserName = errors.New("user name must be at least 10 characters long")
+var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
+var ErrInvalidUserPassword = errors.New("user password should have more than 10 and less than 30 chars")
 
 var userEmails = map[string]UserData{}
 
 func NewUser(name string, email string, password string) (*UserData, error) {
-	if !checkExistingEmail(email) && len(name) >= 10 && len(name) <= 20 {
+	if !checkExistingEmail(email) && len(name) >= 10 && len(name) <= 20 && len(password) >= 10 && len(password) <= 30 {
 		ud := new (UserData)
 		ud.Name = name
 		ud.Email = email
@@ -31,6 +32,8 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 
 	} else if len(name) < 10 || len(name) > 20 { 
 		return &UserData{}, ErrInvalidUserName
+	} else if (len(password) < 10 || len(password) > 30) {
+		return &UserData{}, ErrInvalidUserPassword
 	} else {	
 		return &UserData{}, ErrExistingEmail
 	}
@@ -40,5 +43,13 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 func checkExistingEmail(email string) bool {
 	_, ok := userEmails[email]
 	return ok
+}
+
+func (u *UserData) SetAdmin(admin bool) {
+	u.IsAdmin = admin
+}
+
+func (u UserData) GetAmdin() bool {
+	return u.IsAdmin
 }
 
