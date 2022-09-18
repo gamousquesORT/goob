@@ -9,9 +9,6 @@ type UserData struct {
 	IsAdmin bool
 }
 
-type User interface {
-	NewUser(name, email, password string) (UserData, error)
-}
 
 var ErrExistingEmail = errors.New("email already exists")
 var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
