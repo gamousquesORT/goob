@@ -1,13 +1,16 @@
 package domain
 
-import("errors"
+import (
+	"errors"
 
-"strconv")
+	"strconv"
+)
 
 type ProfileData struct {
 	Alias string
 	Pin int
 	Owner bool
+	Child bool
 }
 
 
@@ -37,6 +40,16 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 	val.Alias = alias
 	val.Pin = pin
 	val.Owner = own
+	val.Child = false
 
 	return  val,nil
+}
+
+
+func (p *ProfileData) SetChildProfile(value bool) {
+	p.Child = value;
+}
+
+func (p ProfileData) IsChildProfile() bool {
+	return p.Child
 }

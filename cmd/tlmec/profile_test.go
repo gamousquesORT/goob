@@ -13,7 +13,7 @@ func TestValidOwnerProfile(t *testing.T) {
 
 		got, err := domain.NewProfile("alias", 12345, true)
 
-		want := domain.ProfileData{"alias", 12345, true}
+		want := domain.ProfileData{"alias", 12345, true, false}
 
 		if *got  != want {
 			t.Errorf("got %v , want %v", got, want)
@@ -51,11 +51,26 @@ func TestValidOwnerProfile(t *testing.T) {
 		assertError(t, err, domain.ErrEInvalidPin)
 	})
 
-	t.Run("Should return an error creating new owner profile with false flag", func(t *testing.T) {
+	t.Run("Should return an error creating an owner profile with false flag", func(t *testing.T) {
 
 		g, err := domain.NewProfile("1234567890", 12345, true)
 		got := g.Owner
 		want := true
+
+		if got != want {
+			t.Errorf("got %v , want %v", got, want)
+		}
+
+		assertNoError(t, err)
+	})
+
+	t.Run("Should be able to set a child profile been an owner", func(t *testing.T) {
+
+		g, err := domain.NewProfile("1234567890", 12345, true)
+
+		g.SetChildProfile(true)
+		got := g.IsChildProfile()
+		want := true;
 
 		if got != want {
 			t.Errorf("got %v , want %v", got, want)
