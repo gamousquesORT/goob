@@ -13,18 +13,19 @@ type ProfileData struct {
 	Child bool
 }
 
+const (
+	MinValidAlias = 1
+	MaxValidAlias = 15
+)
 
 var ErrEInvalidAlias = errors.New("alias should be greater than 1 and less 16")
 var ErrEInvalidPin = errors.New("alias should be of 5 digits")
 
+func checkValidAlias(alias string) bool {
+	return len(alias) >= MinValidAlias && len(alias) <= MaxValidAlias
+}
 
-
-func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
-	val := new(ProfileData)
-	if len(alias) <1 || len(alias) > 15 {
-		return &ProfileData{}, ErrEInvalidAlias
-	}
-
+func checkValidPin(pin int) bool {
 	s := strconv.Itoa(pin)
 	b := true
 	for _, c := range s {
@@ -34,9 +35,20 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 		}
 	}
 	if !b || len(s) != 5 {
+		return false
+	}
+	return true
+	
+}
+
+func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
+	val := new(ProfileData)
+	if !checkValidAlias(alias) {
+		return &ProfileData{}, ErrEInvalidAlias
+	} else if !checkValidPin(pin) {
 		return &ProfileData{},ErrEInvalidPin
 	}
-	
+
 	val.Alias = alias
 	val.Pin = pin
 	val.Owner = own
