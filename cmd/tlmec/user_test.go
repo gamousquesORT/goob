@@ -39,7 +39,8 @@ func TestValidUser(t *testing.T) {
 
 		got, err := domain.NewUser("uniquename123", "uniqueemail", "uniquepassword")
 
-		want := domain.UserData{"uniquename123", "uniqueemail", "uniquepassword", false}
+		prof := []domain.ProfileData{}
+		want := domain.UserData{"uniquename123", "uniqueemail", "uniquepassword", false, prof}
 
 		if reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
@@ -85,3 +86,31 @@ func TestValidUser(t *testing.T) {
 	})
 
 }
+
+
+func TestUserInteractioWithProfile(t *testing.T) {
+
+	t.Run("Should return no error adding the first Profile for a User", func(t *testing.T) {
+
+		user, _ := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
+		prof, _ := domain.NewProfile("Alias1", 12345, true)
+		err := user.AddProfile(*prof)
+
+		assertNoError(t, err)
+	})
+
+	t.Run("Should return no error adding the first Profile for a User and getting it back", func(t *testing.T) {
+
+		user, _ := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
+		want, _ := domain.NewProfile("Alias1", 12345, true)
+		user.AddProfile(*want)
+		got := user.GetProfile(0)
+
+		if reflect.DeepEqual(got, want) {
+			t.Errorf("got %v , want %v", got, want)
+		}		
+		
+	})
+
+}
+

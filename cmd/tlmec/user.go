@@ -7,6 +7,7 @@ type UserData struct {
 	Email string
 	Password string
 	IsAdmin bool
+	Profiles []ProfileData
 }
 
 const (
@@ -40,7 +41,7 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 	ud.Password = password
 	ud.IsAdmin = false
 	userEmails[email] = *ud
-
+	//ud.Profiles =  make([]ProfileData, 4)
 	return ud, nil
 
 }
@@ -65,4 +66,15 @@ func (u *UserData) SetAdmin(admin bool) {
 func (u UserData) GetAmdin() bool {
 	return u.IsAdmin
 }
+
+func (u *UserData) AddProfile(p ProfileData) error {
+	u.Profiles = append(u.Profiles, p)
+	return nil
+}
+
+func (u UserData) GetProfile(index int) ProfileData {
+	return u.Profiles[index]
+}
+
+
 
