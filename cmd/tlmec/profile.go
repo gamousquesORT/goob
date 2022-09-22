@@ -65,3 +65,8 @@ func (p *ProfileData) SetChildProfile(value bool) {
 func (p ProfileData) IsChildProfile() bool {
 	return p.Child
 }
+
+
+func (p ProfileData) IsOwnerProfile() bool {
+	return p.Owner
+}

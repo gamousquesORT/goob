@@ -109,8 +109,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 	t.Run("Should return no error adding the first Profile for a User", func(t *testing.T) {
 
 		user, _ := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
-		prof, _ := domain.NewProfile("Alias1", 12345, true)
-		err := user.AddProfile(*prof)
+		err := user.AddProfile("Alias1", 12345, true)
 
 		assertNoError(t, err)
 	})
@@ -119,7 +118,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 
 		user, _ := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
 		want, _ := domain.NewProfile("Alias1", 12345, true)
-		user.AddProfile(*want)
+		user.AddProfile(want.Alias, want.Pin, want.Owner)
 		got := user.GetProfile(0)
 
 		if reflect.DeepEqual(got, want) {
@@ -130,11 +129,28 @@ func TestUserInteractioWithProfile(t *testing.T) {
 
 	t.Run("Should return an error setting more than one owner profile", func(t *testing.T) {
 		user, _ := domain.NewUser("uniquename123", "unique2345@email.com", "uniquepassword")
-		p1, _ := domain.NewProfile("Alias1", 12345, true)
-		p2, _ := domain.NewProfile("Alias2", 12345, true)
-		user.AddProfile(*p1)
-		err := user.AddProfile(*p2)
+		
+		user.AddProfile("Alias1", 12345, true)
+		err := user.AddProfile("Alias2", 12345, true)
 		assertError(t, err, domain.ErrMorethanOneOwner)
+	})
+
+	t.Run("Should return an error if first profile is not owner", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2355@email.com", "uniquepassword")
+		
+		user.AddProfile("Alias1", 12345, false)
+		err := user.AddProfile("Alias2", 12345, false)
+		assertError(t, err, domain.ErrInvalidProfileSequence)
+	})
+
+	t.Run("Should return an error setting more than four  profiles", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2346@email.com", "uniquepassword")
+		user.AddProfile("Alias1", 12345, true)
+		user.AddProfile("Alias2", 12345, false)
+		user.AddProfile("Alias3", 12345, false)
+		user.AddProfile("Alias4", 12345, false)
+		err:=user.AddProfile("Alias5", 12345, false)
+		assertError(t, err, domain.ErrTooManyProfiles)
 	})
 
 

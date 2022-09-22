@@ -1,3 +1,7 @@
+
+// TODO 
+//  - Too many error types needs refactor
+// 
 package domain
 
 import (
@@ -22,8 +26,6 @@ const (
 	MinValidPassword = 10
 )
 
-// TODO 
-// Too many error types need refactor
 var ErrExistingUserEmail = errors.New("email already exists")
 var ErrInvalidUserEmail = errors.New("invalid email format")
 var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
@@ -31,6 +33,8 @@ var ErrInvalidUserPassword = errors.New("user password should have more than 10 
 var ErrInvalidUserError  = errors.New("invalid user error")
 var ErrMorethanOneOwner = errors.New("a user can only have one owner profile")
 var ErrUnknownUserError  = errors.New("unknown user error")
+var ErrTooManyProfiles = errors.New("too many profiles for a user")
+var ErrInvalidProfileSequence = errors.New("first profiel should be owner")
 
 
 var userEmails = map[string]UserData{}
@@ -85,8 +89,22 @@ func (u UserData) GetAmdin() bool {
 	return u.IsAdmin
 }
 
-func (u *UserData) AddProfile(p ProfileData) error {
-	u.Profiles = append(u.Profiles, p)
+func (u *UserData) AddProfile(alias string, pin int, own bool) error {
+	profile, err := NewProfile(alias, pin, own)
+	userProfiles := len(u.Profiles)
+
+	if err != nil {
+		return err
+	} else if userProfiles == 0 && !own {
+		return ErrInvalidProfileSequence
+	} else if userProfiles == 1 {
+		if u.Profiles[0].IsOwnerProfile() && own {
+			return ErrMorethanOneOwner
+		}
+	} else if len(u.Profiles) == 4 {
+		return ErrTooManyProfiles
+	} 
+	u.Profiles = append(u.Profiles, *profile)
 	return nil
 }
 
