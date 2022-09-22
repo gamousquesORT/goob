@@ -22,11 +22,14 @@ const (
 	MinValidPassword = 10
 )
 
+// TODO 
+// Too many error types need refactor
 var ErrExistingUserEmail = errors.New("email already exists")
 var ErrInvalidUserEmail = errors.New("invalid email format")
 var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
 var ErrInvalidUserPassword = errors.New("user password should have more than 10 and less than 30 chars")
-var ErrInvalidUserError  = errors.New("unknown user error")
+var ErrInvalidUserError  = errors.New("invalid user error")
+var ErrMorethanOneOwner = errors.New("a user can only have one owner profile")
 var ErrUnknownUserError  = errors.New("unknown user error")
 
 

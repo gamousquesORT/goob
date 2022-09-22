@@ -51,7 +51,7 @@ func TestValidOwnerProfile(t *testing.T) {
 		assertError(t, err, domain.ErrEInvalidPin)
 	})
 
-	t.Run("Should return an error creating an owner profile with false flag", func(t *testing.T) {
+	t.Run("Should return no error creating an owner profile with true flag", func(t *testing.T) {
 
 		g, err := domain.NewProfile("1234567890", 12345, true)
 		got := g.Owner
@@ -78,5 +78,7 @@ func TestValidOwnerProfile(t *testing.T) {
 
 		assertNoError(t, err)
 	})
+
+
 
 }

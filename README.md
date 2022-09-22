@@ -1,1 +1,1 @@
-## Testing codepsaces for a toy project written in GO (learning)
+## Testing codepsaces for a small project written in GO (learning)

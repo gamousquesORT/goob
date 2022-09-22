@@ -57,9 +57,17 @@ func TestValidUser(t *testing.T) {
 
 	})
 
-	t.Run("Should return an error given an invalid email", func(t *testing.T) {
+	t.Run("Should return an error given an invalid email missing .com", func(t *testing.T) {
 
 		_, err := domain.NewUser("uniquename222", "gaston11@example", "12345678901")
+
+		assertError(t, err, domain.ErrInvalidUserEmail)
+
+	})
+
+	t.Run("Should return an error given an invalid email missing @ ", func(t *testing.T) {
+
+		_, err := domain.NewUser("uniquename222", "gaston11example.com", "12345678901")
 
 		assertError(t, err, domain.ErrInvalidUserEmail)
 
@@ -119,6 +127,16 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		}		
 		
 	})
+
+	t.Run("Should return an error setting more than one owner profile", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2345@email.com", "uniquepassword")
+		p1, _ := domain.NewProfile("Alias1", 12345, true)
+		p2, _ := domain.NewProfile("Alias2", 12345, true)
+		user.AddProfile(*p1)
+		err := user.AddProfile(*p2)
+		assertError(t, err, domain.ErrMorethanOneOwner)
+	})
+
 
 }
 
