@@ -1,7 +1,16 @@
 package domain_test
 
-import ("testing")
+import ("testing"
+"streamapp.com/domain")
 
+var adminUser = domain.UserData{}
+
+func createAdminUser(t testing.TB) {
+	t.Helper()
+	adminUser, _ := domain.NewUser("Admin6789101", "admin@example.com", "password")
+	adminUser.SetAdmin(true)
+
+}
 
 func TestValidAdminUser(t *testing.T) {
 	t.Run("Should return true given an Admin user ", func(t *testing.T) {

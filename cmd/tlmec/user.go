@@ -1,4 +1,3 @@
-
 // TODO 
 //  - Too many error types needs refactor
 // 
@@ -6,7 +5,6 @@ package domain
 
 import (
 	"errors"
-
 	"regexp"
 )
 
@@ -113,4 +111,6 @@ func (u UserData) GetProfile(index int) ProfileData {
 }
 
 
-
+func (u UserData) GetProfiles() ([]ProfileData) {
+	return u.Profiles
+}

@@ -4,16 +4,9 @@ import (
 	"reflect"
 	"testing"
 	"streamapp.com/domain"
+
 )
 
-var adminUser = domain.UserData{}
-
-func createAdminUser(t testing.TB) {
-	t.Helper()
-	adminUser, _ := domain.NewUser("Admin6789101", "admin@example.com", "password")
-	adminUser.SetAdmin(true)
-
-}
 
 func assertError(t testing.TB, got, want error) {
 	t.Helper()
@@ -151,6 +144,20 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user.AddProfile("Alias4", 12345, false)
 		err:=user.AddProfile("Alias5", 12345, false)
 		assertError(t, err, domain.ErrTooManyProfiles)
+	})
+
+	t.Run("Should return an list with profiles", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2347@email.com", "uniquepassword")
+		user.AddProfile("Alias1", 12345, true)
+		user.AddProfile("Alias2", 12345, false)
+		
+		want := []domain.ProfileData{{Alias: "Alias1", Pin:  12345, Owner: true}, {Alias: "Alias2", Pin:  12345, Owner: false}}
+
+		got := user.GetProfiles()
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v , want %v", got, want)
+		}	
 	})
 
 
