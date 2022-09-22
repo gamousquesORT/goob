@@ -1,6 +1,10 @@
 package domain
 
-import("errors")
+import (
+	"errors"
+
+	"regexp"
+)
 
 type UserData struct {
 	Name string
@@ -18,9 +22,11 @@ const (
 	MinValidPassword = 10
 )
 
-var ErrExistingEmail = errors.New("email already exists")
+var ErrExistingUserEmail = errors.New("email already exists")
+var ErrInvalidUserEmail = errors.New("invalid email format")
 var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
 var ErrInvalidUserPassword = errors.New("user password should have more than 10 and less than 30 chars")
+var ErrInvalidUserError  = errors.New("unknown user error")
 var ErrUnknownUserError  = errors.New("unknown user error")
 
 
@@ -31,7 +37,9 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 	if !checkValidaName(name) {
 		return &UserData{}, ErrInvalidUserName
 	} else if checkExistingEmail(email) {
-		return &UserData{}, ErrExistingEmail
+		return &UserData{}, ErrExistingUserEmail
+	} else if !checkInvalidUserEmail(email) {
+		return &UserData{}, ErrInvalidUserEmail
 	} else if !checkValidPassword(password) {
 		return &UserData{}, ErrInvalidUserPassword
 	} 
@@ -57,6 +65,13 @@ func checkValidPassword(password string) bool {
 func checkExistingEmail(email string) bool {
 	_, ok := userEmails[email]
 	return ok
+}
+
+var validEmaiRegExp = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)  //^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
+func checkInvalidUserEmail(email string) bool {
+	matched := validEmaiRegExp.MatchString(email)
+
+	return matched
 }
 
 func (u *UserData) SetAdmin(admin bool) {

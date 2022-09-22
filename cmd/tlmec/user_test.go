@@ -37,10 +37,10 @@ func TestValidUser(t *testing.T) {
 
 	t.Run("Should return no error given a valid User", func(t *testing.T) {
 
-		got, err := domain.NewUser("uniquename123", "uniqueemail", "uniquepassword")
+		got, err := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
 
 		prof := []domain.ProfileData{}
-		want := domain.UserData{"uniquename123", "uniqueemail", "uniquepassword", false, prof}
+		want := domain.UserData{"uniquename123", "unique@email.com", "uniquepassword", false, prof}
 
 		if reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
@@ -53,7 +53,15 @@ func TestValidUser(t *testing.T) {
 		domain.NewUser("uniquename123", "gaston1@example.com", "uniquepassword")
 		_, err := domain.NewUser("uniquename222", "gaston1@example.com", "12345678901")
 
-		assertError(t, err, domain.ErrExistingEmail)
+		assertError(t, err, domain.ErrExistingUserEmail)
+
+	})
+
+	t.Run("Should return an error given an invalid email", func(t *testing.T) {
+
+		_, err := domain.NewUser("uniquename222", "gaston11@example", "12345678901")
+
+		assertError(t, err, domain.ErrInvalidUserEmail)
 
 	})
 
