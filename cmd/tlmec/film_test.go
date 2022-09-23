@@ -37,4 +37,8 @@ func TestValidFilm(t *testing.T) {
 	
 		assertError(t, err, domain.ErrFilmNameMissing)
 	})
+
+	t.Run("Shoud return given a -1 rating it should return -1", func(t *testing.T) {
+		
+	})
 }
