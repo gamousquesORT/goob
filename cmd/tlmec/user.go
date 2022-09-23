@@ -54,7 +54,6 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 	ud.Password = password
 	ud.IsAdmin = false
 	userEmails[email] = *ud
-	//ud.Profiles =  make([]ProfileData, 4)
 	return ud, nil
 
 }
