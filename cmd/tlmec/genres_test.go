@@ -22,17 +22,11 @@ func TestValidGenres(t *testing.T) {
 	})
 	
 
-	t.Run("Should return no error given a valid Genres data", func(t *testing.T) {
+	t.Run("Should return  error given an empty Genres description", func(t *testing.T) {
 		_, err := domain.NewGenresData("", "Genero para entretenerse")
 	
-		assertNoError(t, err)
+		assertError(t, err, domain.ErrInvalidGenresData)
 	
 	})
-		/*
-	t.Run("Should return an error given a Film without name", func(t *testing.T) {
-		_, err := domain.NewFilmData("", 1, 1, "pelicula sci-fi buena parte 1", domain.G, true)
-	
-		assertError(t, err, domain.ErrFilmNameMissing)
-	})
-	*/
+
 }
