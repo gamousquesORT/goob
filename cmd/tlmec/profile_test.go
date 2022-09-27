@@ -1,8 +1,9 @@
 package domain_test
 
-
 import (
+
 	"testing"
+	"reflect"
 	"streamapp.com/domain"
 )
 
@@ -10,12 +11,13 @@ import (
 func TestValidOwnerProfile(t *testing.T) {
 
 	t.Run("Should return no error creating new valid profile", func(t *testing.T) {
-
 		got, err := domain.NewProfile("alias", 12345, true)
 
-		want := domain.ProfileData{"alias", 12345, true, false}
+		
+		films := []domain.ProfileFilmDetails{}
+		want := domain.ProfileData{"alias", 12345, true, false,films}
 
-		if *got  != want {
+		if !reflect.DeepEqual(got, &want) {
 			t.Errorf("got %v , want %v", got, want)
 		}
 
@@ -79,6 +81,36 @@ func TestValidOwnerProfile(t *testing.T) {
 		assertNoError(t, err)
 	})
 
+}
 
+func TestProfileFilmInteraction(t *testing.T) {
+
+	t.Run("Should return no error adding a film", func(t *testing.T) {
+
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		err := prof.AddFilm(film)
+
+		assertNoError(t, err)
+	})
+
+	t.Run("Should return Added Film given a film", func(t *testing.T) {
+
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		err := prof.AddFilm(film)
+
+		got := prof.GetFilmsDetails()
+
+		want := []domain.ProfileFilmDetails{{Film: film, Votes:  0}}
+
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("got %v , want %v", got, want)
+		}
+
+		assertNoError(t, err)
+	})
 
 }

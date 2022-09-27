@@ -11,6 +11,12 @@ type ProfileData struct {
 	Pin int
 	Owner bool
 	Child bool
+	FilmsDetails []ProfileFilmDetails
+}
+
+type ProfileFilmDetails struct {
+	Film FilmData
+	Votes int
 }
 
 const (
@@ -20,6 +26,7 @@ const (
 
 var ErrEInvalidAlias = errors.New("alias should be greater than 1 and less 16")
 var ErrEInvalidPin = errors.New("alias should be of 5 digits")
+var ErrAddingFilmToProfile = errors.New("could'nt add film to profile")
 
 func checkValidAlias(alias string) bool {
 	return len(alias) >= MinValidAlias && len(alias) <= MaxValidAlias
@@ -53,6 +60,7 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 	val.Pin = pin
 	val.Owner = own
 	val.Child = false
+	val.FilmsDetails = []ProfileFilmDetails{}
 
 	return  val,nil
 }
@@ -69,4 +77,14 @@ func (p ProfileData) IsChildProfile() bool {
 
 func (p ProfileData) IsOwnerProfile() bool {
 	return p.Owner
+}
+
+func (p *ProfileData) AddFilm(film FilmData) error {
+	fd := ProfileFilmDetails{film, 0}
+	p.FilmsDetails = append(p.FilmsDetails, fd)
+	return nil
+}
+
+func (p ProfileData) GetFilmsDetails() []ProfileFilmDetails {
+	return p.FilmsDetails
 }
