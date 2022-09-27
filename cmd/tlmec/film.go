@@ -3,7 +3,8 @@
 
 package domain
 
-import "errors"
+import ("errors"
+"strconv")
 
 type Rating int
 
@@ -18,6 +19,7 @@ const (
 	SecondaryGenre Gentype = iota  
 )
 
+const MaxNumberOfGenres int = 4
 
 type FilmGenre struct {
 	Gener GenresData
@@ -35,21 +37,42 @@ type FilmData struct {
 
 
 var ErrFilmNameMissing  = errors.New("missing film name")
-
+var ErrExpectedPrimaryGenre = errors.New("missing primary genre")
+var ErrTooManyGenres = errors.New("max number of genres is " + strconv.Itoa(MaxNumberOfGenres))
 //domain.NewFilmData("Matrix", interface{}, interface{}, "pelicula sci-fi buena parte 1", domain.G, true)
 func NewFilmData(name string, gen GenresData, gentype Gentype, poster string, desc string, r Rating, spon bool) (*FilmData, error) {
 	if len(name) < 1 {
 		return &FilmData{}, ErrFilmNameMissing
+	} else if gentype != MainGenre {
+		return &FilmData{}, ErrExpectedPrimaryGenre
 	}
 
 	fd := new(FilmData)
 	fd.Name = name
 	fd.Descr = desc
 	fg := FilmGenre{gen,gentype}
-	fd.Genres = make([]FilmGenre,4)
+	fd.Genres = make([]FilmGenre,1)
 	fd.Genres[0] = fg
 	fd.Rate = r
 	fd.Sponsored = spon
 
 	return fd, nil
+}
+
+func (f *FilmData) AddGenre(g GenresData, ty Gentype) error {
+	if len(f.Genres) == MaxNumberOfGenres {
+		return ErrTooManyGenres
+	}
+	filmGen := FilmGenre{}
+	filmGen.Gener = g
+	filmGen.GnType = ty
+
+	destSlice := append(f.Genres,filmGen)
+	f.Genres = destSlice
+
+	return nil
+}
+
+func (f FilmData) GetGenres() ([]FilmGenre) {
+	return f.Genres
 }
