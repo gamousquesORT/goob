@@ -1,7 +1,7 @@
 package domain_test
 
 import (
-	domain "goob/domain/cmd/tlmec"
+	domain "goob/domain/pkg/tlmec"
 	"reflect"
 	"testing"
 )
