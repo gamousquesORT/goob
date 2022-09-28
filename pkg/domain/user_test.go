@@ -1,7 +1,7 @@
 package domain_test
 
 import (
-	domain "goob/domain/pkg/domain"
+	"goob/app/pkg/domain"
 	"reflect"
 	"testing"
 )

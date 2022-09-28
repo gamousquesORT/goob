@@ -1,5 +1,5 @@
-module goob/domain
+module goob/app
 
 go 1.19
 
-replace goob/domain => ./pkg/domain
+
