@@ -1,6 +1,6 @@
-module streamapp.com/domain
+module goob/domain
 
 go 1.19
 
-replace streamapp.com/domain => ../tlmec
+replace goob/domain => ./cmd/tlmec
 

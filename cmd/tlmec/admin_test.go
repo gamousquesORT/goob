@@ -1,7 +1,9 @@
 package domain_test
 
-import ("testing"
-"streamapp.com/domain")
+import (
+	"goob/domain/cmd/tlmec"
+	"testing"
+)
 
 var adminUser = domain.UserData{}
 

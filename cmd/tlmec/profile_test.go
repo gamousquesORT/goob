@@ -1,21 +1,18 @@
 package domain_test
 
 import (
-
-	"testing"
+	domain "goob/domain/cmd/tlmec"
 	"reflect"
-	"streamapp.com/domain"
+	"testing"
 )
-
 
 func TestValidOwnerProfile(t *testing.T) {
 
 	t.Run("Should return no error creating new valid profile", func(t *testing.T) {
 		got, err := domain.NewProfile("alias", 12345, true)
 
-		
 		films := []domain.ProfileFilmDetails{}
-		want := domain.ProfileData{"alias", 12345, true, false,films}
+		want := domain.ProfileData{"alias", 12345, true, false, films}
 
 		if !reflect.DeepEqual(got, &want) {
 			t.Errorf("got %v , want %v", got, want)
@@ -23,7 +20,6 @@ func TestValidOwnerProfile(t *testing.T) {
 
 		assertNoError(t, err)
 	})
-
 
 	t.Run("Should return an error creating new profile with short Alias", func(t *testing.T) {
 
@@ -72,7 +68,7 @@ func TestValidOwnerProfile(t *testing.T) {
 
 		g.SetChildProfile(true)
 		got := g.IsChildProfile()
-		want := true;
+		want := true
 
 		if got != want {
 			t.Errorf("got %v , want %v", got, want)
@@ -104,7 +100,7 @@ func TestProfileFilmInteraction(t *testing.T) {
 
 		got := prof.GetFilmsDetails()
 
-		want := []domain.ProfileFilmDetails{{Film: film, Votes:  0}}
+		want := []domain.ProfileFilmDetails{{Film: film, Votes: 0}}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)

@@ -1,12 +1,10 @@
 package domain_test
 
 import (
+	domain "goob/domain/cmd/tlmec"
 	"reflect"
 	"testing"
-	"streamapp.com/domain"
-
 )
-
 
 func assertError(t testing.TB, got, want error) {
 	t.Helper()
@@ -96,7 +94,6 @@ func TestValidUser(t *testing.T) {
 
 }
 
-
 func TestUserInteractioWithProfile(t *testing.T) {
 
 	t.Run("Should return no error adding the first Profile for a User", func(t *testing.T) {
@@ -116,13 +113,13 @@ func TestUserInteractioWithProfile(t *testing.T) {
 
 		if reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
-		}		
-		
+		}
+
 	})
 
 	t.Run("Should return an error setting more than one owner profile", func(t *testing.T) {
 		user, _ := domain.NewUser("uniquename123", "unique2345@email.com", "uniquepassword")
-		
+
 		user.AddProfile("Alias1", 12345, true)
 		err := user.AddProfile("Alias2", 12345, true)
 		assertError(t, err, domain.ErrMorethanOneOwner)
@@ -130,7 +127,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 
 	t.Run("Should return an error if first profile is not owner", func(t *testing.T) {
 		user, _ := domain.NewUser("uniquename123", "unique2355@email.com", "uniquepassword")
-		
+
 		user.AddProfile("Alias1", 12345, false)
 		err := user.AddProfile("Alias2", 12345, false)
 		assertError(t, err, domain.ErrInvalidProfileSequence)
@@ -142,7 +139,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user.AddProfile("Alias2", 12345, false)
 		user.AddProfile("Alias3", 12345, false)
 		user.AddProfile("Alias4", 12345, false)
-		err:=user.AddProfile("Alias5", 12345, false)
+		err := user.AddProfile("Alias5", 12345, false)
 		assertError(t, err, domain.ErrTooManyProfiles)
 	})
 
@@ -150,16 +147,14 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user, _ := domain.NewUser("uniquename123", "unique2347@email.com", "uniquepassword")
 		user.AddProfile("Alias1", 12345, true)
 		user.AddProfile("Alias2", 12345, false)
-		
-		want := []domain.ProfileData{{Alias: "Alias1", Pin:  12345, Owner: true}, {Alias: "Alias2", Pin:  12345, Owner: false}}
+
+		want := []domain.ProfileData{{Alias: "Alias1", Pin: 12345, Owner: true}, {Alias: "Alias2", Pin: 12345, Owner: false}}
 
 		got := user.GetProfiles()
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
-		}	
+		}
 	})
 
-
 }
-
