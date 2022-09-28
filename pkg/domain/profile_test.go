@@ -62,11 +62,23 @@ func TestValidOwnerProfile(t *testing.T) {
 		assertNoError(t, err)
 	})
 
-	t.Run("Should be able to set a child profile been an owner", func(t *testing.T) {
+	t.Run("Should NOT be able to set a child profile been a not owner profile", func(t *testing.T) {
 
-		g, err := domain.NewProfile("1234567890", 12345, true)
+		g,_ := domain.NewProfile("1234567890", 12345, false)
 
-		g.SetChildProfile(true)
+
+		err := g.SetChildProfile(true)
+		
+
+		assertError(t, err, domain.ErrInvalidProfileAction)
+	})
+
+	t.Run("Should  be able to set a child profile been a not owner profile", func(t *testing.T) {
+
+		g,_ := domain.NewProfile("1234567890", 12345, true)
+
+
+		err := g.SetChildProfile(true)
 		got := g.IsChildProfile()
 		want := true
 
@@ -76,7 +88,6 @@ func TestValidOwnerProfile(t *testing.T) {
 
 		assertNoError(t, err)
 	})
-
 }
 
 func TestProfileFilmInteraction(t *testing.T) {
@@ -110,3 +121,4 @@ func TestProfileFilmInteraction(t *testing.T) {
 	})
 
 }
+
