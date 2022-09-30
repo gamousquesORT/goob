@@ -148,7 +148,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user.AddProfile("Alias1", 12345, true)
 		user.AddProfile("Alias2", 12345, false)
 
-		want := []domain.ProfileData{{Alias: "Alias1", Pin: 12345, Owner: true, Child: false, FilmsDetails: []domain.ProfileFilmDetails{}}, {Alias: "Alias2", Pin: 12345, Owner: false, Child: false, FilmsDetails: []domain.ProfileFilmDetails{}}}
+		want := []domain.ProfileData{{Alias: "Alias1", Pin: 12345, Owner: true, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}, {Alias: "Alias2", Pin: 12345, Owner: false, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}}
 
 		got := user.GetProfiles()
 

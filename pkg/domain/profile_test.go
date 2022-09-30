@@ -11,7 +11,7 @@ func TestValidOwnerProfile(t *testing.T) {
 	t.Run("Should return no error creating new valid profile", func(t *testing.T) {
 		got, err := domain.NewProfile("alias", 12345, true)
 
-		films := []domain.ProfileFilmDetails{}
+		films := map[string]*domain.ProfileFilmDetails{}
 		want := domain.ProfileData{"alias", 12345, true, false, films}
 
 		if !reflect.DeepEqual(got, &want) {
@@ -107,11 +107,11 @@ func TestProfileFilmInteraction(t *testing.T) {
 		prof, _ := domain.NewProfile("alias", 12345, true)
 		film := createValidFilm(t)
 
-		err := prof.AddFilm(film)
+		prof.AddFilm(film)
 
-		got := prof.GetFilmsDetails()
+		got, err := prof.GetFilmsDetails(film)
 
-		want := []domain.ProfileFilmDetails{{Film: film, Votes: 0}}
+		want := domain.ProfileFilmDetails{Film: &film, Vote: domain.ThumbDown}
 
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v , want %v", got, want)
@@ -120,5 +120,44 @@ func TestProfileFilmInteraction(t *testing.T) {
 		assertNoError(t, err)
 	})
 
+
+	t.Run("Should return no error given Thumbup for an existing Film", func(t *testing.T) {
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		prof.AddFilm(film)
+
+		err := prof.RateFilm(film, domain.Thumbup)
+		assertNoError(t, err)
+
+	})
+
+	t.Run("Should return an error given Thumb vote for an Non existing Film", func(t *testing.T) {
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		err := prof.RateFilm(film, domain.Thumbup)
+		assertError(t, err, domain.ErrInvalidFilm)
+
+	})
+
+	t.Run("Should return the same Thumb vote for an existing Film", func(t *testing.T) {
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		prof.AddFilm(film)
+
+		want := domain.Thumbup
+		prof.RateFilm(film, want)
+
+		got, err := prof.GetFilmUserRating(film)
+
+		
+		if got != want {
+			t.Errorf("got %v , want %v", got, want)
+		}
+		assertNoError(t, err)
+
+	})
 }
 

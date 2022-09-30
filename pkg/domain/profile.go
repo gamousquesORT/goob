@@ -11,12 +11,12 @@ type ProfileData struct {
 	Pin int
 	Owner bool
 	Child bool
-	FilmsDetails []ProfileFilmDetails
+	FilmsDetails map[string]*ProfileFilmDetails
 }
 
 type ProfileFilmDetails struct {
-	Film FilmData
-	Votes int
+	Film *FilmData
+	Vote UserRating
 }
 
 const (
@@ -24,10 +24,19 @@ const (
 	MaxValidAlias = 15
 )
 
+type  UserRating int
+
+const (
+	ThumbDown UserRating = iota
+	Thumbup UserRating = iota
+	DoubleThumbsUp UserRating = iota
+)
+
 var ErrEInvalidAlias = errors.New("alias should be greater than 1 and less 16")
 var ErrEInvalidPin = errors.New("alias should be of 5 digits")
 var ErrAddingFilmToProfile = errors.New("could'nt add film to profile")
 var ErrInvalidProfileAction = errors.New("invalid action with owner profle")
+var ErrInvalidFilm = errors.New("film does not exist")
 
 func checkValidAlias(alias string) bool {
 	return len(alias) >= MinValidAlias && len(alias) <= MaxValidAlias
@@ -61,7 +70,7 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 	val.Pin = pin
 	val.Owner = own
 	val.Child = false
-	val.FilmsDetails = []ProfileFilmDetails{}
+	val.FilmsDetails = make(map[string]*ProfileFilmDetails)
 
 	return  val,nil
 }
@@ -86,11 +95,36 @@ func (p ProfileData) IsOwnerProfile() bool {
 }
 
 func (p *ProfileData) AddFilm(film FilmData) error {
-	fd := ProfileFilmDetails{film, 0}
-	p.FilmsDetails = append(p.FilmsDetails, fd)
+	fd := ProfileFilmDetails{&film, 0}
+	p.FilmsDetails[film.Name] = &fd
 	return nil
 }
 
-func (p ProfileData) GetFilmsDetails() []ProfileFilmDetails {
-	return p.FilmsDetails
+func (p ProfileData) GetFilmsDetails(film FilmData) (ProfileFilmDetails, error) {
+	fd, ok := p.FilmsDetails[film.Name]
+	if !ok {
+		return ProfileFilmDetails{}, ErrInvalidFilm
+	}
+	return  *fd, nil
+}
+
+func (p *ProfileData) RateFilm(film FilmData, rating UserRating) error {
+	fd, ok := p.FilmsDetails[film.Name]
+	if !ok {
+		return ErrInvalidFilm
+	}
+	
+	fd.Vote = rating
+	
+	return nil
+
+}
+
+func (p ProfileData) GetFilmUserRating(film FilmData) (UserRating, error) {
+	fd, ok := p.FilmsDetails[film.Name]
+	if !ok {
+		return -1, ErrInvalidFilm
+	}
+
+	return fd.Vote, nil
 }
