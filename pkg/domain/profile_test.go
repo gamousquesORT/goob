@@ -159,5 +159,24 @@ func TestProfileFilmInteraction(t *testing.T) {
 		assertNoError(t, err)
 
 	})
+
+	t.Run("Should be able to mark as watch for a Film", func(t *testing.T) {
+		prof, _ := domain.NewProfile("alias", 12345, true)
+		film := createValidFilm(t)
+
+		prof.AddFilm(film)
+
+		want := true
+		prof.MarkAsWatched(film)
+
+		got, err := prof.Watched(film)
+
+		
+		if got != want {
+			t.Errorf("got %v , want %v", got, want)
+		}
+		assertNoError(t, err)
+
+	})
 }
 

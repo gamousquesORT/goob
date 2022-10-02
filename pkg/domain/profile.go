@@ -17,6 +17,7 @@ type ProfileData struct {
 type ProfileFilmDetails struct {
 	Film *FilmData
 	Vote UserRating
+	Watched bool
 }
 
 const (
@@ -95,7 +96,7 @@ func (p ProfileData) IsOwnerProfile() bool {
 }
 
 func (p *ProfileData) AddFilm(film FilmData) error {
-	fd := ProfileFilmDetails{&film, 0}
+	fd := ProfileFilmDetails{&film, 0, false}
 	p.FilmsDetails[film.Name] = &fd
 	return nil
 }
@@ -127,4 +128,21 @@ func (p ProfileData) GetFilmUserRating(film FilmData) (UserRating, error) {
 	}
 
 	return fd.Vote, nil
+}
+
+func (p* ProfileData) MarkAsWatched(film FilmData) error {
+	fd, ok := p.FilmsDetails[film.Name]
+	if !ok {
+		return ErrInvalidFilm
+	}
+	fd.Watched = true
+	return nil
+}
+
+func (p ProfileData) Watched(film FilmData) (bool, error) {
+	fd, ok := p.FilmsDetails[film.Name]
+	if !ok {
+		return false, ErrInvalidFilm
+	}
+	return fd.Watched, nil
 }
