@@ -157,4 +157,11 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		}
 	})
 
+	t.Run("Should return an error given a duplicated profile alias", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2347@email.com", "uniquepassword")
+		user.AddProfile("Alias1", 12345, true)
+		err := user.AddProfile("Alias1", 12345, false)
+		assertError(t, err, domain.ErrDuplicatedAlias)
+	})
+
 }

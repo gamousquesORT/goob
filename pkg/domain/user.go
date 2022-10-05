@@ -33,7 +33,7 @@ var ErrMorethanOneOwner = errors.New("a user can only have one owner profile")
 var ErrUnknownUserError  = errors.New("unknown user error")
 var ErrTooManyProfiles = errors.New("too many profiles for a user")
 var ErrInvalidProfileSequence = errors.New("first profiel should be owner")
-
+var ErrDuplicatedAlias = errors.New("duplicated Alias")
 
 var userEmails = map[string]UserData{}
 
@@ -94,13 +94,13 @@ func (u *UserData) AddProfile(alias string, pin int, own bool) error {
 		return err
 	} else if userProfiles == 0 && !own {
 		return ErrInvalidProfileSequence
-	} else if userProfiles == 1 {
-		if u.Profiles[0].IsOwnerProfile() && own {
+	} else if userProfiles == 1 && u.Profiles[0].IsOwnerProfile() && own {
 			return ErrMorethanOneOwner
-		}
 	} else if len(u.Profiles) == 4 {
 		return ErrTooManyProfiles
-	} 
+	} else if checkDuplicatedAlias(u, alias) {
+		return ErrDuplicatedAlias
+	}
 	u.Profiles = append(u.Profiles, *profile)
 	return nil
 }
@@ -112,4 +112,13 @@ func (u UserData) GetProfile(index int) ProfileData {
 
 func (u UserData) GetProfiles() ([]ProfileData) {
 	return u.Profiles
+}
+
+func checkDuplicatedAlias(user *UserData, alias string) bool {
+	for _, p :=range user.Profiles {
+		if p.Alias == alias {
+			return true
+		}
+	}
+	return false
 }

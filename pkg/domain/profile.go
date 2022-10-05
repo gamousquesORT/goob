@@ -33,11 +33,13 @@ const (
 	DoubleThumbsUp UserRating = iota
 )
 
+// TODO chceck profiles errors, too many
 var ErrEInvalidAlias = errors.New("alias should be greater than 1 and less 16")
 var ErrEInvalidPin = errors.New("alias should be of 5 digits")
 var ErrAddingFilmToProfile = errors.New("could'nt add film to profile")
 var ErrInvalidProfileAction = errors.New("invalid action with owner profle")
 var ErrInvalidFilm = errors.New("film does not exist")
+
 
 func checkValidAlias(alias string) bool {
 	return len(alias) >= MinValidAlias && len(alias) <= MaxValidAlias
