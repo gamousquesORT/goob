@@ -88,20 +88,31 @@ func (u UserData) GetAmdin() bool {
 
 func (u *UserData) AddProfile(alias string, pin int, own bool) error {
 	profile, err := NewProfile(alias, pin, own)
-	userProfiles := len(u.Profiles)
 
 	if err != nil {
 		return err
-	} else if userProfiles == 0 && !own {
-		return ErrInvalidProfileSequence
-	} else if userProfiles == 1 && u.Profiles[0].IsOwnerProfile() && own {
-			return ErrMorethanOneOwner
-	} else if len(u.Profiles) == 4 {
-		return ErrTooManyProfiles
-	} else if checkDuplicatedAlias(u, alias) {
-		return ErrDuplicatedAlias
+	} 
+	
+	retVal := validateProfileToAdd(u, *profile) 
+
+	if retVal != nil {
+		return retVal
 	}
 	u.Profiles = append(u.Profiles, *profile)
+	return nil
+}
+
+func validateProfileToAdd(user *UserData, p ProfileData) error {
+	userProfiles := len(user.Profiles)
+	if userProfiles == 0 && !p.Owner {
+		return ErrInvalidProfileSequence
+	} else if userProfiles == 1 && user.Profiles[0].IsOwnerProfile() && p.Owner {
+			return ErrMorethanOneOwner
+	} else if userProfiles == 4 {
+		return ErrTooManyProfiles
+	} else if checkDuplicatedAlias(user, p.Alias) {
+		return ErrDuplicatedAlias
+	}
 	return nil
 }
 
