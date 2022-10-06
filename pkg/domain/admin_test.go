@@ -7,16 +7,18 @@ import (
 
 var adminUser = domain.UserData{}
 
-func createAdminUser(t testing.TB) {
+func createAdminUser(t testing.TB) error {
 	t.Helper()
-	adminUser, _ := domain.NewUser("Admin6789101", "admin@example.com", "password")
+	adminUser, err := domain.NewUser("Admin6789101", "admin@example.com", "password901")
 	adminUser.SetAdmin(true)
+
+	return err
 
 }
 
 func TestValidAdminUser(t *testing.T) {
 	t.Run("Should return true given an Admin user ", func(t *testing.T) {
-		createAdminUser(t)
+		err := createAdminUser(t)
 		adminUser.SetAdmin(true)
 		got := adminUser.GetAmdin()
 		want := true
@@ -24,6 +26,8 @@ func TestValidAdminUser(t *testing.T) {
 		if got != want {
 			t.Errorf("got %v, want %v", got, want)
 		}
+
+		assertNoError(t, err)
 
 	})
 }
