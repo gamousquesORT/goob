@@ -19,7 +19,7 @@
 # vendor/
 
 # Go workspace file
-go.work
+#go.work
 arraySlices/.vscode/launch.json
 # goland por si uso 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
