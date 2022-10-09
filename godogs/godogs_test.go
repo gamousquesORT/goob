@@ -1,21 +1,23 @@
 package godogs
 
-import "github.com/cucumber/godog"
+import (
+	"github.com/cucumber/godog"
+)
 
-func iEat(arg1 int) error {
+func iAmLoggedAsAdmin() error {
 	return godog.ErrPending
 }
 
-func thereAreGodogs(arg1 int) error {
+func iCreateNewGenre() error {
 	return godog.ErrPending
 }
 
-func thereShouldBeRemaining(arg1 int) error {
+func iShouldSee(arg1 string) error {
 	return godog.ErrPending
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
-	ctx.Step(`^I eat (\d+)$`, iEat)
-	ctx.Step(`^there are (\d+) godogs$`, thereAreGodogs)
-	ctx.Step(`^there should be (\d+) remaining$`, thereShouldBeRemaining)
+	ctx.Step(`^I am logged as Admin$`, iAmLoggedAsAdmin)
+	ctx.Step(`^I create new genre$`, iCreateNewGenre)
+	ctx.Step(`^I should see "([^"]*)"$`, iShouldSee)
 }

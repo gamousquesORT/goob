@@ -1,4 +1,4 @@
-module goob/godog
+module goob/godogs
 
 go 1.19
 
