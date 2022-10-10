@@ -5,5 +5,5 @@ Feature: Create Genres
 
   Scenario: Add valid genre
     Given I am logged as Admin
-    When I create new genre
+    When I create new genre 
     Then I should see "Genre was successfully created."
