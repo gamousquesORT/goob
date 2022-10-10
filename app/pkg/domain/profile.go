@@ -35,6 +35,7 @@ const (
 
 // TODO chceck profiles errors, too many
 var ErrEInvalidAlias = errors.New("alias should be greater than 1 and less 16")
+var ErrProfilenotFound = errors.New("alias does not exist")
 var ErrEInvalidPin = errors.New("alias should be of 5 digits")
 var ErrAddingFilmToProfile = errors.New("could'nt add film to profile")
 var ErrInvalidProfileAction = errors.New("invalid action with owner profle")

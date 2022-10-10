@@ -13,7 +13,7 @@ type UserData struct {
 	Email string
 	Password string
 	IsAdmin bool
-	Profiles []ProfileData
+	Profiles []*ProfileData
 }
 
 const (
@@ -98,7 +98,8 @@ func (u *UserData) AddProfile(alias string, pin int, own bool) error {
 	if retVal != nil {
 		return retVal
 	}
-	u.Profiles = append(u.Profiles, *profile)
+
+	u.Profiles = append(u.Profiles, profile)
 	return nil
 }
 
@@ -116,12 +117,12 @@ func validateProfileToAdd(user *UserData, p ProfileData) error {
 	return nil
 }
 
-func (u UserData) GetProfile(index int) ProfileData {
+func (u UserData) GetProfile(index int) *ProfileData {
 	return u.Profiles[index]
 }
 
 
-func (u UserData) GetProfiles() ([]ProfileData) {
+func (u UserData) GetProfiles() ([]*ProfileData) {
 	return u.Profiles
 }
 
@@ -132,4 +133,32 @@ func checkDuplicatedAlias(user *UserData, alias string) bool {
 		}
 	}
 	return false
+}
+
+func (user *UserData) SetChildProfile(alias string) error {
+	for _, p := range user.Profiles {
+		if p.Alias == alias {
+			if p.Owner {
+				p.SetChildProfile(true)
+				return nil
+			} 
+			
+		}
+	}
+
+	return ErrInvalidProfileAction
+
+}
+
+
+func (user *UserData) IsChildProfile(alias string) error {
+	for _, p := range user.Profiles {
+		if p.Alias == alias {
+			if p.Child {
+				return nil
+			}
+		}
+	}
+
+	return ErrInvalidProfileAction
 }

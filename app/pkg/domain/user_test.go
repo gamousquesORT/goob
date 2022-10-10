@@ -30,7 +30,7 @@ func TestValidUser(t *testing.T) {
 
 		got, err := domain.NewUser("uniquename123", "unique@email.com", "uniquepassword")
 
-		prof := []domain.ProfileData{}
+		prof := []*domain.ProfileData{}
 		want := domain.UserData{"uniquename123", "unique@email.com", "uniquepassword", false, prof}
 
 		if reflect.DeepEqual(got, want) {
@@ -111,7 +111,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user.AddProfile(want.Alias, want.Pin, want.Owner)
 		got := user.GetProfile(0)
 
-		if reflect.DeepEqual(got, want) {
+		if reflect.DeepEqual(*got, want) {
 			t.Errorf("got %v , want %v", got, want)
 		}
 
@@ -148,7 +148,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		user.AddProfile("Alias1", 12345, true)
 		user.AddProfile("Alias2", 12345, false)
 
-		want := []domain.ProfileData{{Alias: "Alias1", Pin: 12345, Owner: true, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}, {Alias: "Alias2", Pin: 12345, Owner: false, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}}
+		want := []*domain.ProfileData{{Alias: "Alias1", Pin: 12345, Owner: true, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}, {Alias: "Alias2", Pin: 12345, Owner: false, Child: false, FilmsDetails: map[string]*domain.ProfileFilmDetails{}}}
 
 		got := user.GetProfiles()
 
@@ -164,4 +164,21 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		assertError(t, err, domain.ErrDuplicatedAlias)
 	})
 
+	
+	
+	t.Run("Should NOT be able to set a child profile been a not owner profile", func(t *testing.T) {
+		user, _ := domain.NewUser("uniquename123", "unique2347@email.com", "uniquepassword")
+		err:= user.AddProfile("Alias1", 12345, true)
+
+		assertNoError(t, err)
+
+
+		user.SetChildProfile("Alias1")
+		
+
+		err2 := user.IsChildProfile("Alias21")
+
+
+		assertError(t, err2, domain.ErrInvalidProfileAction)
+	})
 }
