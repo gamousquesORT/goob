@@ -31,8 +31,13 @@ func (sta *StreamApp) CreateGenre(name, desc string) (error) {
 	return err
 }
 
-func (sta StreamApp) GetGenres() ([]GenresData) {
-	return sta.genres
+func (sta StreamApp) GetGenres(name string) (GenresData, error) {
+	for _,g := range sta.genres {
+		if g.Name == name {
+			return g, nil
+		}
+	}
+	return GenresData{}, ErrInvalidGenresData
 }
 
 
