@@ -40,4 +40,9 @@ func (sta StreamApp) GetGenres(name string) (GenresData, error) {
 	return GenresData{}, ErrInvalidGenresData
 }
 
+func (sta StreamApp) GetNumberOfGenres() (int) {
+	
+	return len(sta.genres)
+}
+
 
