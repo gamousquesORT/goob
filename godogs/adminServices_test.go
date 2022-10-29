@@ -59,6 +59,17 @@ func iShouldHaveGenresInTheApp(ctx context.Context, numberOfgenres int) error {
 	return godog.ErrUndefined
 }
 
+
+func iAddTheFollowingMovies(arg1 *godog.Table) error {
+	return godog.ErrPending
+}
+
+
+
+func iShouldHaveMovieInTheApp(arg1 int) error {
+	return godog.ErrPending
+}
+
 func TestFeatures(t *testing.T) {
 	suite := godog.TestSuite{
 	  ScenarioInitializer: InitializeScenario,
@@ -74,13 +85,20 @@ func TestFeatures(t *testing.T) {
 	}
   }
   
-  
+
+
+
+
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I am logged as Admin$`, iAmLoggedAsAdmin)
 	ctx.Step(`^I create new genre "([^"]*)", "([^"]*)"$`, iCreateNewGenre)
 	ctx.Step(`^I should be able to retrieve it getting "([^"]*)", "([^"]*)"$`, iShouldBeAbleToRetrieveItGetting)
 	ctx.Step(`^I add the following Genres$`, iAddTheFollowingGenres)
 	ctx.Step(`^I should have (\d+) Genres in the app$`, iShouldHaveGenresInTheApp)
+	ctx.Step(`^I add the following Movies$`, iAddTheFollowingMovies)
+	ctx.Step(`^I added the followin genres$`, iAddTheFollowingGenres)
+	ctx.Step(`^I should have  (\d+) movie in the app$`, iShouldHaveMovieInTheApp)
+
 }
 
 

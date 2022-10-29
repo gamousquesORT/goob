@@ -16,4 +16,13 @@ Scenario: Add several Genres
     | Documental | para aprender |
     Then I should have 4 Genres in the app
 
+Scenario: Add several Movies
+    Given I am logged as Admin
+    And I added the followin genres
+    | Comedia | para reirse |
+    | Suspenso | para pasar un buen rato |
+    | Documental | para aprender |
+    When I add the following Movies
+    | Top Gun | para reirse | 0 | true | Suspenso | Comedia, Documental|
+    Then I should have  1 movie in the app
 
