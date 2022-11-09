@@ -7,29 +7,31 @@ import (
 )
 
 type ProfileData struct {
-	Alias string
-	Pin int
-	Owner bool
-	Child bool
+	Alias        string
+	Pin          int
+	Owner        bool
+	Child        bool
 	FilmsDetails map[string]*ProfileFilmDetails
 }
 
 type ProfileFilmDetails struct {
-	Film *FilmData
-	Vote UserRating
+	Film    *FilmData
+	Vote    UserRating
 	Watched bool
 }
 
 const (
 	MinValidAlias = 1
 	MaxValidAlias = 15
+
+	MaxPinLen = 5
 )
 
-type  UserRating int
+type UserRating int
 
 const (
-	ThumbDown UserRating = iota
-	Thumbup UserRating = iota
+	ThumbDown      UserRating = iota
+	Thumbup        UserRating = iota
 	DoubleThumbsUp UserRating = iota
 )
 
@@ -41,25 +43,35 @@ var ErrAddingFilmToProfile = errors.New("could'nt add film to profile")
 var ErrInvalidProfileAction = errors.New("invalid action with owner profle")
 var ErrInvalidFilm = errors.New("film does not exist")
 
-
 func checkValidAlias(alias string) bool {
 	return len(alias) >= MinValidAlias && len(alias) <= MaxValidAlias
 }
 
 func checkValidPin(pin int) bool {
-	s := strconv.Itoa(pin)
-	b := true
-	for _, c := range s {
+	pinAsStr := strconv.Itoa(pin)
+
+	b, done := checkDigits(pinAsStr)
+	if done {
+		return b
+	}
+	return checkPinLen(pinAsStr)
+
+}
+
+func checkDigits(pinAsStr string) (bool, bool) {
+	for _, c := range pinAsStr {
 		if c < '0' || c > '9' {
-			b = false
-			break
+			return false, true
 		}
 	}
-	if !b || len(s) != 5 {
+	return false, false
+}
+
+func checkPinLen(s string) bool {
+	if len(s) != MaxPinLen {
 		return false
 	}
 	return true
-	
 }
 
 func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
@@ -67,7 +79,7 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 	if !checkValidAlias(alias) {
 		return &ProfileData{}, ErrEInvalidAlias
 	} else if !checkValidPin(pin) {
-		return &ProfileData{},ErrEInvalidPin
+		return &ProfileData{}, ErrEInvalidPin
 	}
 
 	val.Alias = alias
@@ -76,56 +88,55 @@ func NewProfile(alias string, pin int, own bool) (*ProfileData, error) {
 	val.Child = false
 	val.FilmsDetails = make(map[string]*ProfileFilmDetails)
 
-	return  val,nil
+	return val, nil
 }
 
+func (profile *ProfileData) SetChildProfile(value bool) error {
+	if profile.Owner {
+		profile.Child = value
 
-func (p *ProfileData) SetChildProfile(value bool)error {
-	if p.Owner {
-		p.Child = value;
 		return nil
 	}
 
 	return ErrInvalidProfileAction
 }
 
-func (p ProfileData) IsChildProfile() bool {
-	return p.Child
+func (profile *ProfileData) IsChildProfile() bool {
+	return profile.Child
 }
 
-
-func (p ProfileData) IsOwnerProfile() bool {
-	return p.Owner
+func (profile *ProfileData) IsOwnerProfile() bool {
+	return profile.Owner
 }
 
-func (p *ProfileData) AddFilm(film FilmData) error {
+func (profile *ProfileData) AddFilm(film FilmData) error {
 	fd := ProfileFilmDetails{&film, 0, false}
-	p.FilmsDetails[film.Name] = &fd
+	profile.FilmsDetails[film.Name] = &fd
 	return nil
 }
 
-func (p ProfileData) GetFilmsDetails(film FilmData) (ProfileFilmDetails, error) {
-	fd, ok := p.FilmsDetails[film.Name]
+func (profile *ProfileData) GetFilmsDetails(film FilmData) (ProfileFilmDetails, error) {
+	fd, ok := profile.FilmsDetails[film.Name]
 	if !ok {
 		return ProfileFilmDetails{}, ErrInvalidFilm
 	}
-	return  *fd, nil
+	return *fd, nil
 }
 
-func (p *ProfileData) RateFilm(film FilmData, rating UserRating) error {
-	fd, ok := p.FilmsDetails[film.Name]
+func (profile *ProfileData) RateFilm(film FilmData, rating UserRating) error {
+	fd, ok := profile.FilmsDetails[film.Name]
 	if !ok {
 		return ErrInvalidFilm
 	}
-	
+
 	fd.Vote = rating
-	
+
 	return nil
 
 }
 
-func (p ProfileData) GetFilmUserRating(film FilmData) (UserRating, error) {
-	fd, ok := p.FilmsDetails[film.Name]
+func (profile *ProfileData) GetFilmUserRating(film FilmData) (UserRating, error) {
+	fd, ok := profile.FilmsDetails[film.Name]
 	if !ok {
 		return -1, ErrInvalidFilm
 	}
@@ -133,8 +144,8 @@ func (p ProfileData) GetFilmUserRating(film FilmData) (UserRating, error) {
 	return fd.Vote, nil
 }
 
-func (p* ProfileData) MarkAsWatched(film FilmData) error {
-	fd, ok := p.FilmsDetails[film.Name]
+func (profile *ProfileData) MarkAsWatched(film FilmData) error {
+	fd, ok := profile.FilmsDetails[film.Name]
 	if !ok {
 		return ErrInvalidFilm
 	}
@@ -142,8 +153,8 @@ func (p* ProfileData) MarkAsWatched(film FilmData) error {
 	return nil
 }
 
-func (p ProfileData) Watched(film FilmData) (bool, error) {
-	fd, ok := p.FilmsDetails[film.Name]
+func (profile *ProfileData) Watched(film FilmData) (bool, error) {
+	fd, ok := profile.FilmsDetails[film.Name]
 	if !ok {
 		return false, ErrInvalidFilm
 	}

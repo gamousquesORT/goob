@@ -108,7 +108,7 @@ func validateProfileToAdd(user *UserData, profile ProfileData) error {
 	userProfiles := len(user.Profiles)
 	if checkNoUserProfiles(userProfiles) && !profile.Owner {
 		return ErrInvalidProfileSequence
-	} else if userProfiles == 1 && user.Profiles[0].IsOwnerProfile() && profile.Owner {
+	} else if userProfiles == 1 && checkIsOwner(user) && profile.Owner {
 		return ErrMoreThanOneOwner
 	} else if checkMaxUserProfiles(userProfiles) {
 		return ErrTooManyProfiles
@@ -116,6 +116,10 @@ func validateProfileToAdd(user *UserData, profile ProfileData) error {
 		return ErrDuplicatedAlias
 	}
 	return nil
+}
+
+func checkIsOwner(user *UserData) bool {
+	return user.Profiles[0].IsOwnerProfile()
 }
 
 func checkMaxUserProfiles(userProfiles int) bool {
@@ -150,7 +154,6 @@ func (user *UserData) SetChildProfile(alias string) error {
 				p.SetChildProfile(true)
 				return nil
 			}
-
 		}
 	}
 
