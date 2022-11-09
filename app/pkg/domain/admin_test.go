@@ -20,7 +20,7 @@ func TestValidAdminUser(t *testing.T) {
 	t.Run("Should return true given an Admin user ", func(t *testing.T) {
 		err := createAdminUser(t)
 		adminUser.SetAdmin(true)
-		got := adminUser.GetAmdin()
+		got := adminUser.GetAdmin()
 		want := true
 
 		if got != want {

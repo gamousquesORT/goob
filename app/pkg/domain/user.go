@@ -1,6 +1,5 @@
-// TODO 
-//  - Too many error types needs refactor
-// 
+// TODO
+//   - Too many error types needs refactor
 package domain
 
 import (
@@ -9,10 +8,10 @@ import (
 )
 
 type UserData struct {
-	Name string
-	Email string
+	Name     string
+	Email    string
 	Password string
-	IsAdmin bool
+	IsAdmin  bool
 	Profiles []*ProfileData
 }
 
@@ -22,21 +21,23 @@ const (
 
 	MaxValidPassword = 30
 	MinValidPassword = 10
+
+	MinUserProfiles = 0
+	MaxUserProfiles = 4
 )
 
 var ErrExistingUserEmail = errors.New("email already exists")
 var ErrInvalidUserEmail = errors.New("invalid email format")
 var ErrInvalidUserName = errors.New("user name must have more than 10 and less than 20 chars")
 var ErrInvalidUserPassword = errors.New("user password should have more than 10 and less than 30 chars")
-var ErrInvalidUserError  = errors.New("invalid user error")
-var ErrMorethanOneOwner = errors.New("a user can only have one owner profile")
-var ErrUnknownUserError  = errors.New("unknown user error")
+var ErrInvalidUserError = errors.New("invalid user error")
+var ErrMoreThanOneOwner = errors.New("a user can only have one owner profile")
+var ErrUnknownUserError = errors.New("unknown user error")
 var ErrTooManyProfiles = errors.New("too many profiles for a user")
 var ErrInvalidProfileSequence = errors.New("first profiel should be owner")
 var ErrDuplicatedAlias = errors.New("duplicated Alias")
 
 var userEmails = map[string]UserData{}
-
 
 func NewUser(name string, email string, password string) (*UserData, error) {
 	if !checkValidaName(name) {
@@ -47,8 +48,8 @@ func NewUser(name string, email string, password string) (*UserData, error) {
 		return &UserData{}, ErrInvalidUserEmail
 	} else if !checkValidPassword(password) {
 		return &UserData{}, ErrInvalidUserPassword
-	} 
-	ud := new (UserData)
+	}
+	ud := new(UserData)
 	ud.Name = name
 	ud.Email = email
 	ud.Password = password
@@ -71,63 +72,70 @@ func checkExistingEmail(email string) bool {
 	return ok
 }
 
-var validEmaiRegExp = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)  //^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
+var validEmailRegExp = regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`) //^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
 func checkInvalidUserEmail(email string) bool {
-	matched := validEmaiRegExp.MatchString(email)
+	matched := validEmailRegExp.MatchString(email)
 
 	return matched
 }
 
-func (u *UserData) SetAdmin(admin bool) {
-	u.IsAdmin = admin
+func (user *UserData) SetAdmin(admin bool) {
+	user.IsAdmin = admin
 }
 
-func (u UserData) GetAmdin() bool {
-	return u.IsAdmin
+func (user *UserData) GetAdmin() bool {
+	return user.IsAdmin
 }
 
-func (u *UserData) AddProfile(alias string, pin int, own bool) error {
+func (user *UserData) AddProfile(alias string, pin int, own bool) error {
 	profile, err := NewProfile(alias, pin, own)
 
 	if err != nil {
 		return err
-	} 
-	
-	retVal := validateProfileToAdd(u, *profile) 
+	}
+
+	retVal := validateProfileToAdd(user, *profile)
 
 	if retVal != nil {
 		return retVal
 	}
 
-	u.Profiles = append(u.Profiles, profile)
+	user.Profiles = append(user.Profiles, profile)
 	return nil
 }
 
-func validateProfileToAdd(user *UserData, p ProfileData) error {
+func validateProfileToAdd(user *UserData, profile ProfileData) error {
 	userProfiles := len(user.Profiles)
-	if userProfiles == 0 && !p.Owner {
+	if checkNoUserProfiles(userProfiles) && !profile.Owner {
 		return ErrInvalidProfileSequence
-	} else if userProfiles == 1 && user.Profiles[0].IsOwnerProfile() && p.Owner {
-			return ErrMorethanOneOwner
-	} else if userProfiles == 4 {
+	} else if userProfiles == 1 && user.Profiles[0].IsOwnerProfile() && profile.Owner {
+		return ErrMoreThanOneOwner
+	} else if checkMaxUserProfiles(userProfiles) {
 		return ErrTooManyProfiles
-	} else if checkDuplicatedAlias(user, p.Alias) {
+	} else if checkDuplicatedAlias(user, profile.Alias) {
 		return ErrDuplicatedAlias
 	}
 	return nil
 }
 
-func (u UserData) GetProfile(index int) *ProfileData {
-	return u.Profiles[index]
+func checkMaxUserProfiles(userProfiles int) bool {
+	return userProfiles == MaxUserProfiles
 }
 
+func checkNoUserProfiles(userProfiles int) bool {
+	return userProfiles == MinUserProfiles
+}
 
-func (u UserData) GetProfiles() ([]*ProfileData) {
-	return u.Profiles
+func (user *UserData) GetProfile(index int) *ProfileData {
+	return user.Profiles[index]
+}
+
+func (user *UserData) GetProfiles() []*ProfileData {
+	return user.Profiles
 }
 
 func checkDuplicatedAlias(user *UserData, alias string) bool {
-	for _, p :=range user.Profiles {
+	for _, p := range user.Profiles {
 		if p.Alias == alias {
 			return true
 		}
@@ -141,15 +149,14 @@ func (user *UserData) SetChildProfile(alias string) error {
 			if p.Owner {
 				p.SetChildProfile(true)
 				return nil
-			} 
-			
+			}
+
 		}
 	}
 
 	return ErrInvalidProfileAction
 
 }
-
 
 func (user *UserData) IsChildProfile(alias string) error {
 	for _, p := range user.Profiles {

@@ -122,7 +122,7 @@ func TestUserInteractioWithProfile(t *testing.T) {
 
 		user.AddProfile("Alias1", 12345, true)
 		err := user.AddProfile("Alias2", 12345, true)
-		assertError(t, err, domain.ErrMorethanOneOwner)
+		assertError(t, err, domain.ErrMoreThanOneOwner)
 	})
 
 	t.Run("Should return an error if first profile is not owner", func(t *testing.T) {
@@ -164,20 +164,15 @@ func TestUserInteractioWithProfile(t *testing.T) {
 		assertError(t, err, domain.ErrDuplicatedAlias)
 	})
 
-	
-	
 	t.Run("Should NOT be able to set a child profile been a not owner profile", func(t *testing.T) {
 		user, _ := domain.NewUser("uniquename123", "unique2347@email.com", "uniquepassword")
-		err:= user.AddProfile("Alias1", 12345, true)
+		err := user.AddProfile("Alias1", 12345, true)
 
 		assertNoError(t, err)
 
-
 		user.SetChildProfile("Alias1")
-		
 
 		err2 := user.IsChildProfile("Alias21")
-
 
 		assertError(t, err2, domain.ErrInvalidProfileAction)
 	})
