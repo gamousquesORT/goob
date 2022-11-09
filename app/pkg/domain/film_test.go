@@ -12,12 +12,12 @@ func createValidFilm(t *testing.T) domain.FilmData {
 	want := new(domain.FilmData)
 	g := domain.GenresData{"Terror", "da miedo"}
 	want.Name = "Matrix"
-	want.Descr = "pelicula sci-fi buena parte 1"
+	want.Description = "pelicula sci-fi buena parte 1"
 	want.Rate = domain.G
 	want.Sponsored = true
 	want.Genres = make([]domain.FilmGenre, 1)
 	fg := domain.FilmGenre{}
-	fg.Gener = g
+	fg.Genre = g
 	fg.GnType = domain.MainGenre
 	want.Genres[0] = fg
 	return *want
