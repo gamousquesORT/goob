@@ -1,10 +1,15 @@
 package domain
 
+import (
+	"errors"
+)
 
+var ErrNotImplemented = errors.New("function not implemented")
 
 type StreamApp struct {
 	adminUser *UserData
 	genres []GenresData
+	films []FilmData
 }
 
 
@@ -31,7 +36,7 @@ func (sta *StreamApp) CreateGenre(name, desc string) (error) {
 	return err
 }
 
-func (sta StreamApp) GetGenres(name string) (GenresData, error) {
+func (sta *StreamApp) GetGenres(name string) (GenresData, error) {
 	for _,g := range sta.genres {
 		if g.Name == name {
 			return g, nil
@@ -40,9 +45,27 @@ func (sta StreamApp) GetGenres(name string) (GenresData, error) {
 	return GenresData{}, ErrInvalidGenresData
 }
 
-func (sta StreamApp) GetNumberOfGenres() (int) {
+func (sta *StreamApp) GetNumberOfGenres() (int) {
 	
 	return len(sta.genres)
+}
+
+func (sta *StreamApp) CreateFilm(film FilmData, genre GenresData) (error) {
+	var err = film.AddGenre(genre, MainGenre)
+	if err != nil {
+		return ErrNotImplemented
+	}
+
+	sta.films = append(sta.films, film)
+
+
+	return nil
+}
+
+
+func (sta *StreamApp) GetNumberOfMovies() (int) {
+	
+	return len(sta.films)
 }
 
 
